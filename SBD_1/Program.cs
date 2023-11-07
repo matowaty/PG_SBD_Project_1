@@ -2,8 +2,6 @@
 
 //data format in database: (voltage : current : restistance)
 
-using System.ComponentModel.DataAnnotations;
-
 namespace SBD_1
 {
     internal class Program
@@ -13,18 +11,18 @@ namespace SBD_1
             fileHandler file = new fileHandler();
             Console.WriteLine("Hello World!");
 
-            //file.writeBlock();
-            Node value = file.readRecord(1);
-
-            Console.WriteLine(value.ToString());
+            //file.generateNodes(4);
 
             //file.writeBlock();
+            for(int i =0; i < file.getFileSize(); i++)
+            {
+                Node value = file.readRecord(i);
 
+                Console.WriteLine(value.ToString());
+            }
             
-            
 
-
-
+            //file.writeBlock();
 
             Console.ReadLine();
         }
@@ -32,14 +30,21 @@ namespace SBD_1
 
     public struct Node
     {
-        public int voltage;
-        public int current;
-        public int resistance;
-        public Node(int voltage, int current, int resistance)
+        public float voltage;
+        public float current;
+        public float resistance;
+        public Node(float voltage, float current, float resistance)
         {
             this.voltage = voltage;
             this.current = current;
             this.resistance = resistance;
+        }
+
+        public Node(float voltage, float current)
+        {
+            this.voltage = voltage;
+            this.current = current;
+            this.resistance = voltage/current;
         }
 
         public override string ToString()

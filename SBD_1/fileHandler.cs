@@ -1,62 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SBD_1
+﻿namespace SBD_1
 {
     class fileHandler
     {
-        private const int nodeSize = 3;                         //amount of int in one node
-        private const int nodesInBlock = 1;                     //amount of nodes in one block
-        private const int blockSize = nodeSize * nodesInBlock;  //amount of int in one block
+        //can change
+        private const int nodesInBlock = 8;                     //amount of nodes in one block
+        //can't change
+        private const int nodeSize = 3;                         //amount of float variables in one node
+        private const int blockSize = nodeSize * nodesInBlock;  //amount of floats in one block
         private const string file = "../../../test.bin";
-        private const int intSize = 4;                          //size of int in bytes
-        private int[] blockInMemory = new int[blockSize];
+        private const int floatSize = 4;                          //size of float in bytes
+        private float[] blockInMemory = new float[blockSize];
         private int blockInMemoryIndex = -1;
+        private int nodesInFile = 0;                            //amount of nodes saved in file
 
         public fileHandler()
         {
             Console.WriteLine("new handler created");
+            nodesInFile = filesize()/(nodeSize*floatSize);
+            Console.WriteLine("File is initialized with: {0} nodes", nodesInFile);
         }
 
-        public void writeBlock(int blockIndex=1){
+        private void writeBlock(int blockIndex=0){
             Console.WriteLine("writing");
             //block in memory -> temp byte array -> save to pointer in file
-            byte[] buffer = new byte[blockSize*intSize];
-            byte[] tmp = new byte[intSize];
+            byte[] buffer = new byte[blockSize*floatSize];
+            byte[] tmp;
             Console.WriteLine(blockInMemory[0].GetType().Name);
             for(int i = 0; i < blockSize; i++)
             {
                 tmp = BitConverter.GetBytes(blockInMemory[i]);
-                buffer[i*intSize] = tmp[0];
-                buffer[i*intSize +1] = tmp[1];
-                buffer[i*intSize +2] = tmp[2];
-                buffer[i*intSize +3] = tmp[3];
+                buffer[i*floatSize] = tmp[0];
+                buffer[i*floatSize +1] = tmp[1];
+                buffer[i*floatSize +2] = tmp[2];
+                buffer[i*floatSize +3] = tmp[3];
             }
-            Console.WriteLine(buffer);
-            buffer[1] = 0;
-            buffer[3] = 0;
-            Console.WriteLine(buffer);
+
             using (BinaryWriter writer = new BinaryWriter(new FileStream(file, FileMode.Open)))
             {
-                writer.BaseStream.Seek(blockIndex*intSize, SeekOrigin.Begin);
-                writer.Write(buffer, 0, blockSize * intSize);
+                writer.BaseStream.Seek(blockIndex*floatSize, SeekOrigin.Begin);
+                writer.Write(buffer, 0, blockSize * floatSize);
             }
 
 
         }
         private void readBlock(int blockIndex=0){
-            byte[] buffer = new byte[blockSize * intSize];
+            Console.WriteLine("reading");
+            byte[] buffer = new byte[blockSize * floatSize];
             using (BinaryReader reader = new BinaryReader(new FileStream(file, FileMode.Open)))
             {
-                reader.BaseStream.Seek(blockIndex*(blockSize * intSize), SeekOrigin.Begin);
-                reader.Read(buffer, 0, blockSize*intSize);
+                reader.BaseStream.Seek(blockIndex*(blockSize * floatSize), SeekOrigin.Begin);
+                reader.Read(buffer, 0, blockSize*floatSize);
             }
 
             for(int i=0; i<blockSize;i++)
             {
-                blockInMemory[i]=BitConverter.ToInt32(buffer, i*intSize);
+                blockInMemory[i]=BitConverter.ToSingle(buffer, i*floatSize);
             }
             blockInMemoryIndex = blockIndex;
         }
@@ -74,6 +72,51 @@ namespace SBD_1
 
             return readValue;
 
+        }
+
+        public void writeRecord(int index, Node value)
+        {
+
+        }
+
+        private int filesize()
+        {
+            FileInfo fi = new FileInfo(file);
+            return (int)fi.Length;
+        }
+
+        public int getFileSize()
+        {
+            return filesize() / (nodeSize * floatSize);
+        }
+
+        public void generateNodes(int amount)
+        {
+            Random rand = new Random();
+            for(int i=0; i<amount; i++)
+            {
+                Node node = new Node(rand.Next(256), rand.Next(256));
+                byte[] buffer = new byte[nodeSize * floatSize];
+                float[] tmp_buff = new float[nodeSize];
+                tmp_buff[0] = node.voltage;
+                tmp_buff[1] = node.current;
+                tmp_buff[2] = node.resistance;
+                for (int j = 0; j < 3; j++)
+                {
+                    byte[] tmp = BitConverter.GetBytes(tmp_buff[j]);
+                    buffer[j * floatSize] = tmp[0];
+                    buffer[j * floatSize + 1] = tmp[1];
+                    buffer[j * floatSize + 2] = tmp[2];
+                    buffer[j * floatSize + 3] = tmp[3];
+                }
+
+                using (BinaryWriter writer = new BinaryWriter(new FileStream(file, FileMode.Open)))
+                {
+                    writer.BaseStream.Seek(filesize(), SeekOrigin.Begin);
+                    writer.Write(buffer, 0, nodeSize * floatSize);
+                }
+
+            }
         }
     }
 }
