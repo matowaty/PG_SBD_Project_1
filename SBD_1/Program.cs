@@ -1,4 +1,8 @@
-﻿
+﻿//first index in databse is 0
+
+//data format in database: (voltage : current : restistance)
+
+using System.ComponentModel.DataAnnotations;
 
 namespace SBD_1
 {
@@ -12,7 +16,9 @@ namespace SBD_1
             //file.writeBlock();
             Node value = file.readRecord(1);
 
-            file.writeBlock();
+            Console.WriteLine(value.ToString());
+
+            //file.writeBlock();
 
             
             
@@ -34,6 +40,11 @@ namespace SBD_1
             this.voltage = voltage;
             this.current = current;
             this.resistance = resistance;
+        }
+
+        public override string ToString()
+        {
+            return voltage.ToString() + " " + current.ToString() + " " + resistance.ToString();
         }
     }
 }

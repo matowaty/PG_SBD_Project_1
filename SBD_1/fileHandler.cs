@@ -7,10 +7,11 @@ namespace SBD_1
 {
     class fileHandler
     {
-        private const int structSize = 3;
-        private const int blockSize = structSize * 1;
+        private const int nodeSize = 3;                         //amount of int in one node
+        private const int nodesInBlock = 1;                     //amount of nodes in one block
+        private const int blockSize = nodeSize * nodesInBlock;  //amount of int in one block
         private const string file = "../../../test.bin";
-        private const int intSize = 4;
+        private const int intSize = 4;                          //size of int in bytes
         private int[] blockInMemory = new int[blockSize];
         private int blockInMemoryIndex = -1;
 
@@ -49,7 +50,7 @@ namespace SBD_1
             byte[] buffer = new byte[blockSize * intSize];
             using (BinaryReader reader = new BinaryReader(new FileStream(file, FileMode.Open)))
             {
-                reader.BaseStream.Seek(blockIndex, SeekOrigin.Begin);
+                reader.BaseStream.Seek(blockIndex*(blockSize * intSize), SeekOrigin.Begin);
                 reader.Read(buffer, 0, blockSize*intSize);
             }
 
@@ -62,14 +63,14 @@ namespace SBD_1
 
         public Node readRecord(int index)
         {
-            int blockIndex = index / blockSize;
+            int blockIndex = index / nodesInBlock;
             if(blockInMemoryIndex!=blockIndex)
             {
                 readBlock(blockIndex);
             }
-            int internalIndex = index % blockSize;
+            int internalIndex = index % nodesInBlock;
 
-            Node readValue = new Node(blockInMemory[internalIndex*structSize], blockInMemory[internalIndex*structSize+1], blockInMemory[internalIndex*structSize+2]);
+            Node readValue = new Node(blockInMemory[internalIndex*nodeSize], blockInMemory[internalIndex*nodeSize+1], blockInMemory[internalIndex*nodeSize+2]);
 
             return readValue;
 
