@@ -3,11 +3,11 @@
     class fileHandler
     {
         //can change
-        private const int nodesInBlock = 8;                     //amount of nodes in one block
+        private const int nodesInBlock = 100;                     //amount of nodes in one block
         //can't change
         private const int nodeSize = 3;                         //amount of float variables in one node
         private const int blockSize = nodeSize * nodesInBlock;  //amount of floats in one block
-        private const string file = "../../../test.bin";
+        private const string file = "../../../drive.bin";
         private const int floatSize = 4;                          //size of float in bytes
         private float[] blockInMemory = new float[blockSize];
         private int blockInMemoryIndex = -1;
@@ -15,7 +15,7 @@
 
         public fileHandler()
         {
-            Console.WriteLine("new handler created");
+            Console.WriteLine("New handler created");
             nodesInFile = filesize()/(nodeSize*floatSize);
             Console.WriteLine("File is initialized with: {0} nodes", nodesInFile);
         }

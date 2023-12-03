@@ -9,9 +9,9 @@ namespace SBD_1
         static void Main(string[] args)
         {
             fileHandler file = new fileHandler();
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Starting simulation");
 
-            //file.generateNodes(4);
+            //file.generateNodes(120);
 
             //file.writeBlock();
             for(int i =0; i < file.getFileSize(); i++)
