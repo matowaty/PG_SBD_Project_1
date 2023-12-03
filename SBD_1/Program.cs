@@ -8,15 +8,18 @@ namespace SBD_1
     {
         static void Main(string[] args)
         {
-            fileHandler file = new fileHandler();
+            fileHandler drive = new fileHandler();
+            fileHandler[] pipes = new fileHandler[2];
+            pipes[0] = new fileHandler("../../../pipe1.bin");
+            pipes[1] = new fileHandler("../../../pipe2.bin");
             Console.WriteLine("Starting simulation");
 
-            //file.generateNodes(120);
+            //pipes[1].generateNodes(1);
 
-            //file.writeBlock();
-            for(int i =0; i < file.getFileSize(); i++)
+            //drive.writeBlock();
+            for(int i = 0; i < drive.getNumberOfNodes(); i++)
             {
-                Node value = file.readRecord(i);
+                Node value = drive.readRecord(i);
 
                 Console.WriteLine(value.ToString());
             }
@@ -25,6 +28,12 @@ namespace SBD_1
             //file.writeBlock();
 
             Console.ReadLine();
+
+            /*bool showMenu = true;
+            while (showMenu)
+            {
+                showMenu = MainMenu();
+            }*/
         }
     }
 
@@ -50,6 +59,29 @@ namespace SBD_1
         public override string ToString()
         {
             return voltage.ToString() + " " + current.ToString() + " " + resistance.ToString();
+        }
+
+        //main menu loop
+        private static bool MainMenu()
+        {
+            Console.Clear();
+            Console.WriteLine("Choose an option:");
+            Console.WriteLine("1) Reverse String");
+            Console.WriteLine("2) Remove Whitespace");
+            Console.WriteLine("3) Exit");
+            Console.Write("\r\nSelect an option: ");
+
+            switch (Console.ReadLine())
+            {
+                case "1":
+                    return true;
+                case "2":
+                    return true;
+                case "3":
+                    return false;
+                default:
+                    return true;
+            }
         }
     }
 }
